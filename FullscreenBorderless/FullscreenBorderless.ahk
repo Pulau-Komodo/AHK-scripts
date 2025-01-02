@@ -13,6 +13,9 @@
 
 #Requires AutoHotkey v2.0
 
+CoordMode("Mouse", "Screen")
+CoordMode("ToolTip", "Screen")
+
 loop {
     MouseGetPos(, , &window, &control)
     window_status := WinGetStyle("ahk_id " window)
@@ -24,26 +27,43 @@ loop {
     Sleep(50)
 }
 
-LButton:: {
-    MouseGetPos(, , &window, &control)
-    window_status := WinGetStyle("ahk_id " window)
-    if window_status & 0xC00000 {
-        WinSetStyle(-0xC00000, "ahk_id " window)
-        WinMove(0, 0, 1920, 1080, "ahk_id " window)
-        ToolTip("Now borderless")
-    } else {
-        WinSetStyle(+0xC00000, "ahk_id " window)
-        ToolTip("Now with border")
+MoveAndResize(x, y, window) {
+    found_screen := false
+    loop MonitorGetCount() {
+        MonitorGet(A_Index, &left, &top, &right, &bottom)
+        if x >= left && x < right && y >= top && y < bottom {
+            found_screen := true
+            break
+        }
     }
+    if !found_screen {
+        ExitWithMessage("Failed to find the correct screen. Was the cursor outside of any screen somehow?", 3000, 1)
+    }
+    WinMove(left, top, right - left, bottom - top, window)
+}
+
+ExitWithMessage(message, duration := 1000, code := 0) {
+    ToolTip(message)
     Suspend(1)
-    Sleep(1000)
-    ExitApp()
+    Sleep(duration)
+    ExitApp(code)
+}
+
+LButton:: {
+    MouseGetPos(&x, &y, &window)
+    window := "ahk_id " window
+    window_status := WinGetStyle(window)
+    if window_status & 0xC00000 {
+        WinSetStyle(-0xC00000, window)
+        MoveAndResize(x, y, window)
+        ExitWithMessage("Now borderless")
+    } else {
+        WinSetStyle(+0xC00000, window)
+        ExitWithMessage("Now with border")
+    }
 }
 
 Esc::
 RButton:: {
-    ToolTip("closing")
-    Suspend(1)
-    Sleep(1000)
-    ExitApp()
+    ExitWithMessage("closing")
 }
