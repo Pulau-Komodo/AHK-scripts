@@ -61,11 +61,11 @@ ToggleWindow(avoid_taskbar) {
     window := "ahk_id " window
     window_status := WinGetStyle(window)
     if window_status & 0xC00000 {
-        WinSetStyle(-0xC00000, window)
+        WinSetStyle("-0xC00000", window)
         MoveAndResize(x, y, window, avoid_taskbar)
         ExitWithMessage("Now borderless")
     } else {
-        WinSetStyle(+0xC00000, window)
+        WinSetStyle("+0xC00000", window)
         ExitWithMessage("Now with border")
     }
 }
