@@ -60,13 +60,19 @@ ToggleWindow(avoid_taskbar) {
     MouseGetPos(&x, &y, &window)
     window := "ahk_id " window
     window_status := WinGetStyle(window)
-    if window_status & 0xC00000 {
+    if window_status & 0xC00000 { ; Has a border
         WinSetStyle("-0xC00000", window)
         MoveAndResize(x, y, window, avoid_taskbar)
         ExitWithMessage("Now borderless")
     } else {
         WinSetStyle("+0xC00000", window)
-        ExitWithMessage("Now with border")
+        if window_status & 0x10000 { ; Has a maximize button (or would, if it had a title bar)
+            WinMaximize(window)
+            ExitWithMessage("Now with border and maximized")
+        } else {
+            MoveAndResize(x, y, window, true)
+            ExitWithMessage("Now with border")
+        }
     }
 }
 
