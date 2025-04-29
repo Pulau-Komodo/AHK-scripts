@@ -4,6 +4,9 @@
 
 #Requires AutoHotkey v2.0
 
+CoordMode("Pixel", "Screen")
+CoordMode("Mouse", "Screen")
+
 !LButton:: {
     A_Clipboard := GetColour()
 }
@@ -18,5 +21,9 @@
 GetColour() {
     MouseGetPos(&x, &y)
     colour := PixelGetColor(x, y)
+	local preview := Gui("+AlwaysOnTop +Disabled -Caption +0x800000 +E0x20")
+	WinSetTransparent(255, preview.Hwnd)
+	preview.BackColor := colour
+	preview.Show("W20 H20 X" . x . " Y" . y . " NoActivate")
     return SubStr(colour, 3)
 }
