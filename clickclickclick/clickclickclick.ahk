@@ -181,8 +181,5 @@ XButton1:: {
         Sleep(DownTime)
         Click("Up Right")
         Sleep(PlainDelay)
-        if !GetKeyState("XButton2", "P") {
-            break
-        }
     }
 }
