@@ -7,6 +7,13 @@
 CoordMode("Pixel", "Screen")
 CoordMode("Mouse", "Screen")
 
+loop {
+    MouseGetPos(&x, &y)
+	colour := PixelGetColor(x, y)
+	ToolTip(colour)
+	Sleep(10)
+}
+
 !LButton:: {
     A_Clipboard := GetColour()
 }
